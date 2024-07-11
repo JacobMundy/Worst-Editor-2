@@ -4,47 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        .CodeMirror {
-            width: 100%;
-            height: 100%;
-        }
-
-        .settings {
-            width: 100%;
-            height: 25px;
-            display: flex;
-            justify-content: flex-start;
-            background-color: #f0f0f0;
-            padding: 0 5px;
-            gap: 5px;
-        }
-
-        #selected-tab {
-            background-color: #f0f0f0;
-        }
-    </style>
+    <title>Worst Editor 2</title>
+    <link rel="stylesheet" href="css/editor.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.7/codemirror.min.css">
 </head>
 
 <body>
     <div class="settings">
-        <select id="mode">
-            <option value="text">Plain Text</option>
-            <option value="javascript">JavaScript</option>
-            <option value="css">CSS</option>
-            <option value="htmlmixed">HTML</option>
-        </select>
-        <button id="mememmeme">Toggle Line Numbers</button>
+        <div class="menu">
+            <button id="file-menu" class="settings-buttons">File</button>
+            <div class="menu-content" id="file-menu-content">
+                <button id="new-file">New File</button>
+                <button id="open-file">Open File...</button>
+                <button id="save-state">Save</button>
+                <button id="save-as">Save As...</button>
+                <button id="close-file" style="background-color: red;">Close File</button>
+            </div>
+        </div>
+        <button id="settings" class="settings-buttons">Settings</button>
+        <button id="mememmeme" class="settings-buttons">Toggle Line Numbers</button>
+        <button id="test" class="settings-buttons">Test</button>
     </div>
     <div class="tab-bar">
         <button id="new-tab">+</button>
@@ -53,56 +32,7 @@
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.7/codemirror.min.js"></script>
-    <script>
-        let tabCounter = 1;
-        var lineNumbers = true;
-        const editors = new Map();
-
-        function createNewTab() {
-            const tabId = `tab-${tabCounter++}`;
-            const tabButton = document.createElement('button');
-            tabButton.textContent = `New ${tabId}`;
-            tabButton.onclick = () => switchToTab(tabId);
-
-            document.querySelector('.tab-bar').insertBefore(tabButton, document.getElementById('new-tab'));
-
-            const editorDiv = document.createElement('div');
-            editorDiv.id = tabId;
-            document.querySelector('.editor-container').appendChild(editorDiv);
-
-            const editor = CodeMirror(editorDiv, {
-                lineNumbers: lineNumbers,
-                mode: "text",
-                theme: "material",
-            });
-
-
-            editor.setSize("100vw", "calc(100vh - 45px)");
-            editors.set(tabId, editor);
-            switchToTab(tabId);
-        }
-
-        function switchToTab(tabId) {
-            document.querySelectorAll('.editor-container > div').forEach(div => div.style.display = 'none');
-            document.getElementById(tabId).style.display = 'block';
-            document.querySelectorAll('.tab-bar > button').forEach(button => button.style.backgroundColor = '#808080');
-            document.getElementById("new-tab").style.backgroundColor = '#f0f0f0';
-            document.querySelector(`.tab-bar > button:nth-child(${Array.from(editors.keys()).indexOf(tabId) + 1})`).style.backgroundColor = '#f0f0f0';
-        }
-
-        document.getElementById('new-tab').onclick = createNewTab;
-
-        // Create initial tab
-        createNewTab();
-
-        // Area below will be used for settings and other stuff
-        document.getElementById('mememmeme').addEventListener('click', function () {
-            lineNumbers = !lineNumbers;
-            for (let editor of editors.values()) {
-                editor.setOption('lineNumbers', lineNumbers);
-            }
-        });
-    </script>
+    <script src="javascript/editor.js"></script>
 </body>
 
 </html>
