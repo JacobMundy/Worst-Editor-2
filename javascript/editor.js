@@ -1,11 +1,21 @@
 let tabCounter = 1;
 var lineNumbers = true;
 var currentTab = null;
+var closedTabs = [];
 const editors = new Map();
 
-function createNewTab() {
-    const tabId = `tab-${tabCounter++}`;
+function createNewTab(tabId = null) {
+    if (tabId == null) {
+        tabId = `tab-${tabCounter}`;
+        while (editors.has(tabId)) {
+            tabCounter++;
+            tabId = `tab-${tabCounter}`;
+            console.log('Tab ID already exists, incrementing to:', tabId);
+        }
+        tabCounter++;
+    }
     const tabButton = document.createElement('button');
+    tabButton.dataset.tabId = tabId;
     tabButton.textContent = `New ${tabId}`;
     tabButton.onclick = () => switchToTab(tabId);
 
@@ -85,7 +95,7 @@ function saveToLocalStorage() {
     localStorage.setItem('editor_state', JSON.stringify(editorState));
 }
 
-document.getElementById('new-tab').onclick = createNewTab;
+document.getElementById('new-tab').onclick = () => createNewTab();
 
 // Create initial tab
 createNewTab();
@@ -156,11 +166,21 @@ document.getElementById("close-tab").addEventListener('click', function () {
     // TODO
     // Could be good idea to have confirmation and session saving here
     console.log('Close tab clicked');
+    const editor = editors.get(currentTab);
+    closedTabs.push({
+        'filename': currentTab,
+        'data': editor.getValue()
+    });
+    editor.setValue('');
+    editor.clearHistory();
+    editors.delete(currentTab);
+    document.getElementById(currentTab).remove();
+    document.querySelector(`.tab-bar > button[data-tab-id="${currentTab}"]`).remove();
+    
 });
 
 document.getElementById('settings').addEventListener('click', function () {
     popup = window.open('settings.html', 'Settings', 'width=400,height=400');
-
 });
 
 loadFromLocalStorage();
